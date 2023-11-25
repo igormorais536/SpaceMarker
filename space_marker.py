@@ -78,6 +78,7 @@ while True:
                 if len(pontos) >= 2:
                     linha = (pontos[-2][:2], pontos[-1][:2])
                     linhas.append(linha)
+                    #a criação de pontos e linhas agora utiliza tuplas em vez de listas.
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_F10:
                 salvar_marcacoes()
