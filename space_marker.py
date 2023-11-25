@@ -1,6 +1,5 @@
 import os
 import pygame
-import random
 import pickle
 from tkinter import Tk, simpledialog
 
@@ -67,40 +66,45 @@ while True:
             salvar_marcacoes()
             pygame.quit()
             exit()
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:  
-                x, y = event.pos
-                nome = obter_nome()  
-                if nome == "":
-                    nome = "Desconhecido ({}, {})".format(x, y)
-                ponto = (x, y, nome)
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1:
+                 #mouse foi modificado de pygame.MOUSEBUTTONDOWN para pygame.MOUSEBUTTONUP, Isso significa que o código agora responde ao clique do botão do mouse quando ele é solto, e não quando é pressionado.
+                pos = pygame.mouse.get_pos()
+                nome = obter_nome()
+                if nome is None:
+                    nome = f"Desconhecido{pos}"
+                ponto = (*pos, nome)
                 pontos.append(ponto)
                 if len(pontos) >= 2:
                     linha = (pontos[-2][:2], pontos[-1][:2])
                     linhas.append(linha)
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_F10:  
+            if event.key == pygame.K_F10:
                 salvar_marcacoes()
-            elif event.key == pygame.K_F11:  
+            elif event.key == pygame.K_F11:
                 carregar_marcacoes()
-            elif event.key == pygame.K_F12:  
+            elif event.key == pygame.K_F12:
                 excluir_marcacoes()
-            elif event.key == pygame.K_ESCAPE:  
+            elif event.key == pygame.K_ESCAPE:
                 salvar_marcacoes()
+                pygame.quit()
+                exit()
 
     tela.blit(fundo, (0, 0))
 
-    for i, linha in enumerate(linhas):
-        pygame.draw.line(tela, (255, 255, 255), linha[0], linha[1], 2)  
-        (x1, y1), (x2, y2) = linha
-        soma_distancias = calcular_distancia(x1, y1, x2, y2)
-        texto_distancia = f"Distância: {soma_distancias}"
-        exibir_texto(texto_distancia, ((x1 + x2) / 2, (y1 + y2) / 2 - 10 * i))  
+    for linha in linhas:
+        pygame.draw.line(tela, (255, 255, 255), linha[0], linha[1], 2)
 
     for ponto in pontos:
         x, y, nome = ponto
-        pygame.draw.circle(tela, (255, 255, 255), (x, y), 5)  
+        pygame.draw.circle(tela, (255, 255, 255), (x, y), 5)
         exibir_texto(nome, (x + 10, y))
+
+    for linha in linhas:
+        (x1, y1), (x2, y2) = linha
+        soma_distancias = calcular_distancia(x1, y1, x2, y2)
+        texto_distancia = f"Distância: {soma_distancias}"
+        exibir_texto(texto_distancia, ((x1 + x2) / 2, (y1 + y2) / 2))
 
     exibir_texto("Pressione F10 para salvar as marcações", (10, 10))
     exibir_texto("Pressione F11 para carregar as marcações", (10, 20))
@@ -108,4 +112,5 @@ while True:
 
     pygame.display.update()
     clock.tick(60)
+
 pygame.quit()
